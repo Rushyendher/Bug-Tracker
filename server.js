@@ -40,10 +40,15 @@ app.post("/api/bugs",(request,response) => {
     });
 });
 
-app.get("/api/bugs/:id",(request,response) => {
-    db.collection("bugs").findOne({_id: ObjectId(request.params.id)},(err,bug) => {
-        response.json(bug);
+app.put('/api/bugs/:id', function(req, res) {
+  var bug = req.body;
+  console.log("Modifying bug:", req.params.id, bug);
+  var oid = ObjectId(req.params.id);
+  db.collection("bugs").updateOne({_id: oid}, bug, function(err, result) {
+    db.collection("bugs").find({_id: oid}).next(function(err, doc) {
+      res.send(doc);
     });
+  });
 });
 
 MongoClient.connect("mongodb://localhost/bugsdb",(err,dbConnection) => {

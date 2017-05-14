@@ -24986,6 +24986,10 @@ var _BugList = require("./BugList");
 
 var _BugList2 = _interopRequireDefault(_BugList);
 
+var _BugEdit = require("./BugEdit");
+
+var _BugEdit2 = _interopRequireDefault(_BugEdit);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -25021,11 +25025,12 @@ _reactDom2.default.render(_react2.default.createElement(
     _reactRouter.Router,
     null,
     _react2.default.createElement(_reactRouter.Route, { path: "/bugs", component: _BugList2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: "/bugs/:id", component: _BugEdit2.default }),
     _react2.default.createElement(_reactRouter.Redirect, { from: "/", to: "/bugs" }),
     _react2.default.createElement(_reactRouter.Route, { path: "*", component: NoPageFound })
 ), document.getElementById("main"));
 
-},{"./BugList":232,"react":226,"react-dom":51,"react-router":196}],230:[function(require,module,exports){
+},{"./BugEdit":231,"./BugList":233,"react":226,"react-dom":51,"react-router":196}],230:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -25093,6 +25098,141 @@ var BugAdd = function (_React$Component) {
 exports.default = BugAdd;
 
 },{"react":226}],231:[function(require,module,exports){
+"use strict";
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+    return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () {
+    function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }return function (Constructor, protoProps, staticProps) {
+        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+    };
+}();
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require("react-router");
+
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
+
+function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+    }
+}
+
+function _possibleConstructorReturn(self, call) {
+    if (!self) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+    }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var BugEdit = function (_React$Component) {
+    _inherits(BugEdit, _React$Component);
+
+    function BugEdit(props) {
+        _classCallCheck(this, BugEdit);
+
+        var _this = _possibleConstructorReturn(this, (BugEdit.__proto__ || Object.getPrototypeOf(BugEdit)).call(this, props));
+
+        _this.state = {
+            priority: '',
+            status: '',
+            owner: '',
+            title: ''
+        };
+        return _this;
+    }
+
+    _createClass(BugEdit, [{
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            this.loadData();
+        }
+    }, {
+        key: "componentDidUpdate",
+        value: function componentDidUpdate(prevProps) {
+            if (this.props.params.id != prevProps.params.id) {
+                this.loadData();
+            }
+        }
+    }, {
+        key: "loadData",
+        value: function loadData() {
+            $.ajax({
+                type: 'GET',
+                url: '/api/bugs/' + this.props.params.id,
+                success: function (bug) {
+                    this.setState(bug);
+                }.bind(this)
+            });
+        }
+    }, {
+        key: "onChange",
+        value: function onChange() {
+            this.setState({
+                priority: this.refs.priority.value,
+                status: this.refs.status.value,
+                owner: this.refs.owner.value,
+                title: this.refs.title.value
+            });
+        }
+    }, {
+        key: "submit",
+        value: function submit(e) {
+            e.preventDefault();
+            var bug = {
+                status: this.state.status,
+                priority: this.state.priority,
+                owner: this.state.owner,
+                title: this.state.title
+            };
+
+            $.ajax({
+                url: '/api/bugs/' + this.props.params.id, type: 'PUT', contentType: 'application/json',
+                data: JSON.stringify(bug),
+                dataType: 'json',
+                success: function (bug) {
+                    this.setState(bug);
+                }.bind(this)
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return _react2.default.createElement("div", { className: "container" }, _react2.default.createElement("h3", null, "Edit Bug - ", this.props.params.id), _react2.default.createElement("br", null), _react2.default.createElement("form", { onSubmit: this.submit.bind(this) }, "Priority:", _react2.default.createElement("select", { ref: "priority", name: "priority", value: this.state.priority, onChange: this.onChange.bind(this) }, _react2.default.createElement("option", { value: "P1" }, "P1"), _react2.default.createElement("option", { value: "P2" }, "P2"), _react2.default.createElement("option", { value: "P3" }, "P3")), _react2.default.createElement("br", null), "Status:", _react2.default.createElement("select", { ref: "status", value: this.state.status, onChange: this.onChange.bind(this) }, _react2.default.createElement("option", null, "New"), _react2.default.createElement("option", null, "Open"), _react2.default.createElement("option", null, "Fixed"), _react2.default.createElement("option", null, "Closed")), _react2.default.createElement("br", null), "Owner: ", _react2.default.createElement("input", { ref: "owner", className: "form-control", type: "text", value: this.state.owner, onChange: this.onChange.bind(this) }), _react2.default.createElement("br", null), "Title: ", _react2.default.createElement("input", { ref: "title", className: "form-control", type: "text", value: this.state.title, onChange: this.onChange.bind(this) }), _react2.default.createElement("br", null), _react2.default.createElement("button", { type: "submit" }, "Submit"), _react2.default.createElement("br", null), _react2.default.createElement(_reactRouter.Link, { to: "/bugs" }, "Back to bug list")));
+        }
+    }]);
+
+    return BugEdit;
+}(_react2.default.Component);
+
+exports.default = BugEdit;
+
+},{"react":226,"react-router":196}],232:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25235,7 +25375,7 @@ var BugFilter = function (_React$Component) {
 
 exports.default = BugFilter;
 
-},{"react":226}],232:[function(require,module,exports){
+},{"react":226}],233:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25366,7 +25506,7 @@ var BugList = function (_React$Component) {
 
 exports.default = BugList;
 
-},{"./BugAdd":230,"./BugFilter":231,"./BugTable":234,"react":226}],233:[function(require,module,exports){
+},{"./BugAdd":230,"./BugFilter":232,"./BugTable":235,"react":226}],234:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25378,6 +25518,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require("react-router");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -25405,7 +25547,11 @@ var BugRow = function (_React$Component) {
                 _react2.default.createElement(
                     "td",
                     null,
-                    this.props.bug._id
+                    _react2.default.createElement(
+                        _reactRouter.Link,
+                        { to: '/bugs/' + this.props.bug._id },
+                        this.props.bug._id
+                    )
                 ),
                 _react2.default.createElement(
                     "td",
@@ -25436,7 +25582,7 @@ var BugRow = function (_React$Component) {
 
 exports.default = BugRow;
 
-},{"react":226}],234:[function(require,module,exports){
+},{"react":226,"react-router":196}],235:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25531,4 +25677,4 @@ var BugTable = function (_React$Component) {
 
 exports.default = BugTable;
 
-},{"./BugRow":233,"react":226}]},{},[229]);
+},{"./BugRow":234,"react":226}]},{},[229]);
