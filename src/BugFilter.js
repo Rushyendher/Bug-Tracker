@@ -53,7 +53,7 @@ export default class BugFilter extends React.Component{
                     <option value="Closed">Closed</option>
                     <option value="New">New</option>
                 </select>
-
+                &nbsp;
                 Priority
                 <select ref="priority" value={this.state.priority} onChange={this.onSelect.bind(this)}>
                     <option value="">(Any)</option>
@@ -63,7 +63,7 @@ export default class BugFilter extends React.Component{
                 </select>
                 <br/>
                 <br/>
-                <input type="button" value="Apply Filter" onClick={this.filterHandler.bind(this)}/>
+                <input className="btn btn-info" type="button" value="Apply Filter" onClick={this.filterHandler.bind(this)}/>
             </div>
         )
     }

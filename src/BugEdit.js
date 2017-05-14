@@ -52,7 +52,9 @@ export default class BugEdit extends React.Component{
         }
 
         $.ajax({
-            url: '/api/bugs/' + this.props.params.id, type: 'PUT', contentType:'application/json',
+            url: '/api/bugs/' + this.props.params.id,
+            type: 'PUT',
+            contentType:'application/json',
             data: JSON.stringify(bug),
             dataType: 'json',
             success: function(bug) {
@@ -64,7 +66,7 @@ export default class BugEdit extends React.Component{
     render(){
         return(
             <div className="container">
-                <h3>Edit Bug - {this.props.params.id}</h3> 
+                <h1>Edit Bug - {this.props.params.id}</h1>
                 <br/>
                 <form onSubmit={this.submit.bind(this)}>
                     Priority:
@@ -73,7 +75,7 @@ export default class BugEdit extends React.Component{
                       <option value="P2">P2</option>
                       <option value="P3">P3</option>
                     </select>
-                    <br/>
+                    &nbsp;
                     Status:
                     <select ref="status" value={this.state.status} onChange={this.onChange.bind(this)}>
                       <option>New</option>
@@ -82,11 +84,12 @@ export default class BugEdit extends React.Component{
                       <option>Closed</option>
                     </select>
                     <br/>
-                    Owner: <input ref="owner" className="form-control" type="text" value={this.state.owner} onChange={this.onChange.bind(this)}/>
                     <br/>
-                    Title: <input ref="title" className="form-control" type="text" value={this.state.title} onChange={this.onChange.bind(this)}/>
+                    <input placeholder="Owner" ref="owner" className="form-control" type="text" value={this.state.owner} onChange={this.onChange.bind(this)}/>
                     <br/>
-                    <button type="submit">Submit</button>
+                    <input placeholder="Title" ref="title" className="form-control" type="text" value={this.state.title} onChange={this.onChange.bind(this)}/>
+                    <br/>
+                    <button className="btn btn-info" type="submit">Submit</button>
                     <br/>
                     <Link to="/bugs">Back to bug list</Link>
                 </form>
