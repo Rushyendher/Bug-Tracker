@@ -2,6 +2,7 @@ var express = require("express");
 var path = require("path");
 var bodyparser = require("body-parser");
 var MongoClient = require("mongodb").MongoClient;
+var ObjectId = require('mongodb').ObjectID;
 
 var app = express();
 var db;
@@ -33,9 +34,15 @@ app.post("/api/bugs",(request,response) => {
     db.collection("bugs").insertOne(newBug,(err,result) => {
         var newId = result.insertedId;
         console.log(newId);
-        db.collection("bugs").find({'_id':newId}).next((err,docs) => {
+        db.collection("bugs").find({_id:newId}).next((err,docs) => {
             response.json(docs);
         })
+    });
+});
+
+app.get("/api/bugs/:id",(request,response) => {
+    db.collection("bugs").findOne({_id: ObjectId(request.params.id)},(err,bug) => {
+        response.json(bug);
     });
 });
 

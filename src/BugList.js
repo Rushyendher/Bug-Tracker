@@ -14,10 +14,25 @@ export default class BugList extends React.Component{
     }
 
     componentDidMount(){
-        this.loadData({});
+        this.loadData();
+    }
+
+    componentDidUpdate(prevProps) {
+      var oldQuery = prevProps.location.query;
+      var newQuery = this.props.location.query;
+      if (oldQuery.priority === newQuery.priority &&
+          oldQuery.status === newQuery.status) {
+        console.log("BugList: componentDidUpdate, no change in filter, not updating");
+        return;
+      } else {
+        console.log("BugList: componentDidUpdate, loading data with new filter");
+        this.loadData();
+      }
     }
 
     loadData(filter){
+        var query = this.props.location.query || {};
+        var filter = {priority: query.priority, status: query.status};
         $.ajax({
             type: 'GET',
             url: '/api/bugs',
@@ -28,6 +43,10 @@ export default class BugList extends React.Component{
                 })
             }.bind(this)
         })
+    }
+
+    changeFilter(newFilter) {
+      this.props.history.push({search: '?' + $.param(newFilter)});
     }
 
     addBug(bug){
@@ -53,7 +72,7 @@ export default class BugList extends React.Component{
         return(
             <div className="container">
                 <h1>Bug Tracker</h1>
-                <BugFilter loadData={this.loadData.bind(this)}/>
+                <BugFilter submitHandler={this.changeFilter.bind(this)} initFilter={this.props.location.query}/>
                 <hr/>
                 <BugTable bugs={this.state.bugs}/>
                 <hr/>

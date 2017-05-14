@@ -18,7 +18,7 @@ class NoPageFound extends React.Component{
 ReactDOM.render(
     <Router>
         <Route path="/bugs" component={BugList}/>
-        <Redirect from="/" to "/bugs" />
+        <Redirect from="/" to="/bugs" />
         <Route path="*" component={NoPageFound} />
     </Router>,
     document.getElementById("main")
